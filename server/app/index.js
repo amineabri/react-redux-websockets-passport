@@ -1,4 +1,3 @@
-const ObjectID = require('mongodb').ObjectID;
 const User = require('../models/user');
 const Quiz = require('../models/quiz');
 const messages = require("../constants/messages");
@@ -8,7 +7,7 @@ module.exports.answerQuestion = (
     quizId,
     questionId,
     answerId,
-    callback = () => {}
+    callback
 ) => {
     Quiz.getById(quizId, (err, quiz) => {
         if (err) {
@@ -64,7 +63,7 @@ module.exports.leaveQuiz = (userId, callback) => {
                 return callback(
                     {
                         type: messages.JOIN_QUIZ_WAIT,
-                        payload: quizData.maxUsersCount - quizData.users.length
+                        payload: quiz.maxUsersCount - quiz.users.length
                     },
                     quiz.users
                 );
@@ -82,6 +81,116 @@ module.exports.leaveQuiz = (userId, callback) => {
             );
         });
     });
+};
+
+module.exports.finishQuiz = (quizId, isUnexpectedFinished = false, callback) => {
+    return Quiz.getById(
+        quizId,
+        (err, quizData) => {
+
+        if (err) {
+            return callback(
+                {
+                    type: messages.JOIN_QUIZ_REJECT,
+                    payload: err
+                },
+                quizData.users
+            );
+        }
+
+        Quiz.removeUsers(
+            quizId,
+            (err, result) => {
+                quizData.users.forEach((userId) => {
+                    User.calculateTotalPoints(
+                        userId,
+                        () => User.reset(
+                            userId,
+                            err => {
+
+                                if (err) {
+                                    return callback(
+                                        {
+                                            type: messages.JOIN_QUIZ_REJECT,
+                                            payload: err
+                                        },
+                                        quizData.users
+                                    );
+                                }
+
+                                callback(
+                                    {
+                                        type: messages.SOMEONE_LEFT_QUIZ,
+                                        payload: {
+                                            quizId: quizId,
+                                            usersCount: result.users.length
+                                        }
+                                    }
+                                );
+                            }
+                        )
+                    );
+                })
+            }
+        );
+
+        User.getByActiveQuizId(
+            quizId,
+            (err, activeUsers) => {
+                callback(
+                    {
+                        type: messages.FINISH_QUIZ_SUCCESS,
+                        payload: {
+                            quizId: quizData._id,
+                            activeUsers: activeUsers,
+                            isUnexpectedFinished
+                        }
+                    },
+                    quizData.users
+                );
+            }
+        );
+    });
+};
+
+module.exports.sendQuestions = (quizId, callback) => {
+    let questionCounter = 0;
+
+    const questionAsk = () => {
+
+        Quiz.isInProgress(quizId, questionCounter)
+            .then(quizData => {
+                User.getByActiveQuizId(
+                    quizId,
+                    (err, activeUsers) => {
+                        callback(
+                            {
+                                type: messages.INCOMING_QUESTION,
+                                payload: {
+                                    quizId: quizId,
+                                    questionId: questionCounter,
+                                    question: quizData.questions[questionCounter],
+                                    activeUsers: activeUsers
+                                }
+                            },
+                            quizData.users
+                        );
+
+                        questionCounter++;
+                    }
+                );
+            })
+            .catch(isUnexpectedFinished => {
+                clearInterval(interval);
+
+                return this.finishQuiz(quizId, isUnexpectedFinished, callback);
+            }
+        );
+    };
+
+    questionAsk();
+
+    const interval = setInterval(questionAsk, 10000);
 };
 
 module.exports.joinQuiz = (userId, quizId, callback) => {
@@ -153,236 +262,9 @@ module.exports.joinQuiz = (userId, quizId, callback) => {
                         quizData.users
                     );
 
-                    let questionCounter = 0;
-
-                    const questionAsk = () => {
-
-                        User.find(
-                            {activeQuizId: quizId},
-                            {"name": true, "points": true},
-                            (err, activeUsers) => {
-
-                            if (err) {
-                                return callback(
-                                    {
-                                        type: messages.JOIN_QUIZ_REJECT,
-                                        payload: err
-                                    },
-                                    quizData.users
-                                );
-                            }
-
-                            // Finish quiz if there is less than 2 activeUsers
-                            if (activeUsers.length < 2) {
-                                clearInterval(interval);
-
-                                return Quiz.findOne(
-                                    {_id: new ObjectID(quizId)},
-                                    (err, quizData) => {
-
-                                    if (err) {
-                                        return callback(
-                                            {
-                                                type: messages.JOIN_QUIZ_REJECT,
-                                                payload: err
-                                            },
-                                            quizData.users
-                                        );
-                                    }
-
-                                    // Remove users from quiz and assign points
-                                    quizData.users.forEach((userId) => {
-                                        Quiz.findOneAndUpdate(
-                                            { _id: new ObjectID(quizId) },
-                                            { $pull: { users: String(userId) } },
-                                            { new: true },
-                                            (err, quizData) => {
-
-                                                if (err) {
-                                                    return callback(
-                                                        {
-                                                            type: messages.JOIN_QUIZ_REJECT,
-                                                            payload: err
-                                                        },
-                                                        quizData.users
-                                                    );
-                                                }
-
-                                                User.findOne(
-                                                    {_id: new ObjectID(userId)},
-                                                    (err, user) => {
-
-                                                        if (err) {
-                                                            return callback(
-                                                                {
-                                                                    type: messages.JOIN_QUIZ_REJECT,
-                                                                    payload: err
-                                                                },
-                                                                quizData.users
-                                                            );
-                                                        }
-
-                                                    User.findOneAndUpdate(
-                                                        {_id: new ObjectID(userId)},
-                                                        {$set: {
-                                                            activeQuizId: null,
-                                                            points: 0,
-                                                            total_points: user.total_points + user.points
-                                                        }},
-                                                        (err) => {
-                                                            if (err) {
-                                                                return callback(
-                                                                    {
-                                                                        type: messages.JOIN_QUIZ_REJECT,
-                                                                        payload: err
-                                                                    },
-                                                                    quizData.users
-                                                                );
-                                                            }
-                                                        }
-                                                    );
-                                                });
-                                            }
-                                        );
-                                    });
-
-                                    return callback(
-                                        {
-                                            type: messages.FINISH_QUIZ_SUCCESS,
-                                            payload: {
-                                                quizId: quizId,
-                                                activeUsers: activeUsers,
-                                                isUnexpectedFinished: true
-                                            }
-                                        },
-                                        quizData.users
-                                    );
-
-                                });
-                            }
-
-                            // Finish the quiz if it is the last question
-                            if (questionCounter >= quizData.questions.length) {
-                                clearInterval(interval);
-
-                                return Quiz.findOne(
-                                    {_id: new ObjectID(quizId)},
-                                    (err, quizData) => {
-
-                                    if (err) {
-                                        return callback(
-                                            {
-                                                type: messages.JOIN_QUIZ_REJECT,
-                                                payload: err
-                                            },
-                                            [userId]
-                                        );
-                                    }
-
-                                    // Remove users from quiz and assign points
-                                    quizData.users.forEach((userId) => {
-                                        Quiz.findOneAndUpdate(
-                                            {_id: new ObjectID(quizId)},
-                                            {$pull: { users: String(userId) }},
-                                            {new: true},
-                                            (err, quizData) => {
-
-                                                if (err) {
-                                                    return callback(
-                                                        {
-                                                            type: messages.JOIN_QUIZ_REJECT,
-                                                            payload: err
-                                                        },
-                                                        quizData.users
-                                                    );
-                                                }
-
-                                                User.findOne(
-                                                    {_id: new ObjectID(userId)},
-                                                    (err, user) => {
-
-                                                        if (err) {
-                                                            return callback(
-                                                                {
-                                                                    type: messages.JOIN_QUIZ_REJECT,
-                                                                    payload: err
-                                                                },
-                                                                quizData.users
-                                                            );
-                                                        }
-
-                                                        User.findOneAndUpdate(
-                                                            {_id: new ObjectID(userId)},
-                                                            {$set: {
-                                                                activeQuizId: null,
-                                                                points: 0,
-                                                                total_points: user.total_points + user.points
-                                                            }},
-                                                            (err) => {
-
-                                                                if (err) {
-                                                                    return callback(
-                                                                        {
-                                                                            type: messages.JOIN_QUIZ_REJECT,
-                                                                            payload: err
-                                                                        },
-                                                                        quizData.users
-                                                                    );
-                                                                }
-
-                                                                callback(
-                                                                    {
-                                                                        type: messages.SOMEONE_LEFT_QUIZ,
-                                                                        payload: {
-                                                                            quizId: quizId,
-                                                                            usersCount: quizData.users.length
-                                                                        }
-                                                                    }
-                                                                );
-                                                            }
-                                                        );
-                                                    }
-                                                );
-                                            }
-                                        );
-                                    });
-
-                                    callback(
-                                        {
-                                            type: messages.FINISH_QUIZ_SUCCESS,
-                                            payload: {
-                                                quizId: quiz._id,
-                                                activeUsers: activeUsers
-                                            }
-                                        },
-                                        quizData.users
-                                    );
-                                });
-                            }
-
-                            callback(
-                                {
-                                    type: messages.INCOMING_QUESTION,
-                                    payload: {
-                                        quizId: quizId,
-                                        questionId: questionCounter,
-                                        question: quizData.questions[questionCounter],
-                                        activeUsers: activeUsers
-                                    }
-                                },
-                                quizData.users
-                            );
-
-                            questionCounter++;
-                        });
-                    };
-
-                // Ask the first question
-                questionAsk();
-
-                // Ask other questions after interval has passed
-                const interval = setInterval(questionAsk, 10000);
-            }
-        );
-    });
+                    return this.sendQuestions(quizId, callback);
+                }
+            );
+        }
+    );
 };

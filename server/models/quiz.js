@@ -50,6 +50,15 @@ module.exports.removeUser = (userId, callback) => Quiz.findOneAndUpdate(
     callback
 );
 
+module.exports.removeUsers = (quizId, callback) => Quiz.findOneAndUpdate(
+    {_id: new ObjectID(quizId)},
+    {$set: {
+        users: []
+    }},
+    {new: true},
+    callback
+);
+
 module.exports.addUser = (quizId, userId, callback) => {
     Quiz.findOne(
         {_id: new ObjectID(quizId)},
@@ -71,3 +80,26 @@ module.exports.addUser = (quizId, userId, callback) => {
         }
     );
 };
+
+module.exports.isInProgress = (quizId, questionCounter = 0) => new Promise(
+    (resolve, reject) => {
+        Quiz.findOne(
+            {_id: new ObjectID(quizId)},
+            (err, result) => {
+                if (err) {
+                    return reject(true);
+                }
+
+                if (result.users.length < result.maxUsersCount) {
+                    return reject(true);
+                }
+
+                if (questionCounter >= result.questions.length) {
+                    return reject(false);
+                }
+
+                return resolve(result);
+            }
+        );
+    }
+);

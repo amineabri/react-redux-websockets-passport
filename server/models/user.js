@@ -72,6 +72,16 @@ module.exports.incrementPoint = (userId, callback) => User.findOneAndUpdate(
     callback
 );
 
+module.exports.getByActiveQuizId = (quizId, callback) => User.find(
+    {activeQuizId: quizId},
+    {
+        _id: true,
+        name: true,
+        points: true
+    },
+    callback
+);
+
 module.exports.reset = (userId, callback) => User.findOneAndUpdate(
     {_id: new ObjectID(userId)},
     {$set: {
@@ -80,6 +90,18 @@ module.exports.reset = (userId, callback) => User.findOneAndUpdate(
     }},
     {new: true},
     callback
+);
+
+module.exports.calculateTotalPoints = (userId, callback) => User.findOne(
+    {_id: new ObjectID(userId)},
+    (err, user) => User.findOneAndUpdate(
+        {_id: new ObjectID(userId)},
+        {$set: {
+            points: 0,
+            total_points: user.total_points + user.points
+        }},
+        callback
+    )
 );
 
 module.exports.joinQuiz = (userId, quizId, callback) => User.findOneAndUpdate(
