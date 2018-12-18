@@ -9,31 +9,33 @@ module.exports.answerQuestion = (
     answerId,
     callback
 ) => {
-    Quiz.getById(quizId, (err, quiz) => {
-        if (err) {
-            return err;
-        }
+    Quiz.checkIfAnswerIsCorrect(
+        quizId,
+        questionId,
+        answerId,
+        (err, isCorrect) => {
+            if (err) {
+                return err;
+            }
 
-        const isCorrect = quiz.questions[questionId]["answer_id"] === parseInt(answerId);
+            if (isCorrect) {
+                User.incrementPoint(userId, err => {
+                    if (err) {
+                        return err;
+                    }
+                });
+            }
 
-        if (isCorrect) {
-            User.incrementPoint(userId, err => {
-                if (err) {
-                    return err;
-                }
-            });
-        }
-
-        return callback(
-            {
-                type: messages.ANSWER_QUESTION_SUCCESS,
-                payload: {
-                    answerId,
-                    isCorrect
-                }
-            },
-            [userId]
-        );
+            return callback(
+                {
+                    type: messages.ANSWER_QUESTION_SUCCESS,
+                    payload: {
+                        answerId,
+                        isCorrect
+                    }
+                },
+                [userId]
+            );
     });
 };
 

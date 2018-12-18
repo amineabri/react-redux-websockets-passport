@@ -61,6 +61,23 @@ module.exports.removeUsers = (quizId, callback) => Quiz.findOneAndUpdate(
     callback
 );
 
+module.exports.checkIfAnswerIsCorrect = (quizId, questionId, answerId, callback) => {
+    Quiz.findOne(
+        {_id: new ObjectID(quizId)},
+        (err, quizData) => {
+
+            if (err) {
+                return callback(err);
+            }
+
+            return callback(
+                err,
+                quizData.questions[questionId]["answer_id"] === parseInt(answerId)
+            );
+        }
+    );
+};
+
 module.exports.addUser = (quizId, userId, callback) => {
     Quiz.findOne(
         {_id: new ObjectID(quizId)},
