@@ -45,7 +45,9 @@ module.exports.getUsers = (quizId, callback) => Quiz.findOne(
 
 module.exports.removeUser = (userId, callback) => Quiz.findOneAndUpdate(
     {users: {$in: [String(userId)]}},
-    {$pull: {users: String(userId)}},
+    {$pull: {
+        users: String(userId)
+    }},
     {new: true},
     callback
 );
@@ -73,7 +75,9 @@ module.exports.addUser = (quizId, userId, callback) => {
 
             Quiz.findOneAndUpdate(
                 {_id: new ObjectID(quizId)},
-                {$addToSet: {users: userId}},
+                {$addToSet: {
+                    users: userId
+                }},
                 {new: true},
                 callback
             );
@@ -81,25 +85,23 @@ module.exports.addUser = (quizId, userId, callback) => {
     );
 };
 
-module.exports.isInProgress = (quizId, questionCounter = 0) => new Promise(
-    (resolve, reject) => {
-        Quiz.findOne(
-            {_id: new ObjectID(quizId)},
-            (err, result) => {
-                if (err) {
-                    return reject(true);
-                }
-
-                if (result.users.length < result.maxUsersCount) {
-                    return reject(true);
-                }
-
-                if (questionCounter >= result.questions.length) {
-                    return reject(false);
-                }
-
-                return resolve(result);
+module.exports.isInProgress = (quizId, questionCounter = 0, callback) => {
+    Quiz.findOne(
+        {_id: new ObjectID(quizId)},
+        (err, result) => {
+            if (err) {
+                return callback(false, true, err);
             }
-        );
-    }
-);
+
+            if (result.users.length < result.maxUsersCount) {
+                return callback(false, true, result);
+            }
+
+            if (questionCounter >= result.questions.length) {
+                return callback(false, false, result);
+            }
+
+            return callback(true, false, result);
+        }
+    );
+};

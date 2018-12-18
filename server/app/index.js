@@ -158,8 +158,16 @@ module.exports.sendQuestions = (quizId, callback) => {
 
     const questionAsk = () => {
 
-        Quiz.isInProgress(quizId, questionCounter)
-            .then(quizData => {
+        Quiz.isInProgress(
+            quizId,
+            questionCounter,
+            (isInProgress, isUnexpectedFinished, quizData) => {
+                if (!isInProgress) {
+                    clearInterval(interval);
+
+                    return this.finishQuiz(quizId, isUnexpectedFinished, callback);
+                }
+
                 User.getByActiveQuizId(
                     quizId,
                     (err, activeUsers) => {
@@ -179,11 +187,6 @@ module.exports.sendQuestions = (quizId, callback) => {
                         questionCounter++;
                     }
                 );
-            })
-            .catch(isUnexpectedFinished => {
-                clearInterval(interval);
-
-                return this.finishQuiz(quizId, isUnexpectedFinished, callback);
             }
         );
     };
@@ -191,6 +194,33 @@ module.exports.sendQuestions = (quizId, callback) => {
     questionAsk();
 
     const interval = setInterval(questionAsk, 10000);
+};
+
+module.exports.attemptStartQuiz = (quizId, callback) => {
+    Quiz.getById(
+        quizId,
+        (err, quizData) => {
+            // Wait for other players to join if necessary
+            if (quizData.users.length < quizData.maxUsersCount) {
+                return callback(
+                    {
+                        type: messages.JOIN_QUIZ_WAIT,
+                        payload: quizData.maxUsersCount - quizData.users.length
+                    },
+                    quizData.users
+                );
+            }
+
+            callback(
+                {
+                    type: messages.START_QUIZ_SUCCESS
+                },
+                quizData.users
+            );
+
+            return this.sendQuestions(quizId, callback);
+        }
+    )
 };
 
 module.exports.joinQuiz = (userId, quizId, callback) => {
@@ -243,28 +273,10 @@ module.exports.joinQuiz = (userId, quizId, callback) => {
                             usersCount: quizData.users.length
                         }
                     });
-
-                    // Wait for other players to join if necessary
-                    if (quizData.users.length < quizData.maxUsersCount) {
-                        return callback(
-                            {
-                                type: messages.JOIN_QUIZ_WAIT,
-                                payload: quizData.maxUsersCount - quizData.users.length
-                            },
-                            quizData.users
-                        );
-                    }
-
-                    callback(
-                        {
-                            type: messages.START_QUIZ_SUCCESS
-                        },
-                        quizData.users
-                    );
-
-                    return this.sendQuestions(quizId, callback);
                 }
             );
+
+            this.attemptStartQuiz(quizId, callback);
         }
     );
 };
