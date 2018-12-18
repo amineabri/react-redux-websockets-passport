@@ -102,23 +102,19 @@ module.exports.addUser = (quizId, userId, callback) => {
     );
 };
 
-module.exports.isInProgress = (quizId, questionCounter = 0, callback) => {
+module.exports.getIsInProgress = (quizId, callback) => {
     Quiz.findOne(
         {_id: new ObjectID(quizId)},
         (err, result) => {
             if (err) {
-                return callback(false, true, err);
+                return callback(err, false);
             }
 
             if (result.users.length < result.maxUsersCount) {
-                return callback(false, true, result);
+                return callback(err, false, result);
             }
 
-            if (questionCounter >= result.questions.length) {
-                return callback(false, false, result);
-            }
-
-            return callback(true, false, result);
+            return callback(err, true, result);
         }
     );
 };

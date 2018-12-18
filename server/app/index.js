@@ -160,14 +160,17 @@ module.exports.sendQuestions = (quizId, callback) => {
 
     const questionAsk = () => {
 
-        Quiz.isInProgress(
+        Quiz.getIsInProgress(
             quizId,
-            questionCounter,
-            (isInProgress, isUnexpectedFinished, quizData) => {
+            (err, isInProgress, quizData) => {
                 if (!isInProgress) {
                     clearInterval(interval);
+                    return this.finishQuiz(quizId, true, callback);
+                }
 
-                    return this.finishQuiz(quizId, isUnexpectedFinished, callback);
+                if (questionCounter >= quizData.questions.length) {
+                    clearInterval(interval);
+                    return this.finishQuiz(quizId, false, callback);
                 }
 
                 User.getByActiveQuizId(
