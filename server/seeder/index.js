@@ -1,7 +1,10 @@
+const _cliProgress = require('cli-progress');
 const Quiz = require("../models/quiz");
 const getCategories = require("./OpenTDB/api").getCategories;
 const getQuestions = require("./OpenTDB/api").getQuestions;
 const QUESTIONS_PER_QUIZ = require("./OpenTDB/config").QUESTIONS_PER_QUIZ;
+
+const progressBar = new _cliProgress.Bar({}, _cliProgress.Presets.shades_grey);
 
 async function asyncForEach(array, callback) {
     for (let index = 0; index < array.length; index++) {
@@ -10,17 +13,22 @@ async function asyncForEach(array, callback) {
 }
 
 function fetchQuizDataFromAPI() {
+    console.log("SEEDER: Fetching data from API");
+
     return new Promise(resolve => {
         return getCategories().then(async categories => {
             const formattedQuizzes = [];
 
-            await asyncForEach(categories, async category => {
+            progressBar.start(categories.length, 0);
+
+            await asyncForEach(categories, async (category, index) => {
                 await getQuestions({
                     params: {
                         category: category.id,
                         amount: QUESTIONS_PER_QUIZ
                     }
                 }).then(questions => {
+
                     const formattedQuestions = [];
 
                     questions.forEach(question => {
@@ -39,10 +47,14 @@ function fetchQuizDataFromAPI() {
                         name: category.name,
                         questions: formattedQuestions
                     });
+
+                    progressBar.update(index + 1);
                 });
             });
 
             resolve(formattedQuizzes);
+
+            progressBar.stop(); 
         })
     });
 }
@@ -68,7 +80,6 @@ module.exports.init = () => {
                 questions: quiz.questions
             }));
 
-            console.log(`SEEDER: Added ${quizData.length} new quizzes`);
             console.log(`SEEDER: Done`);
             return;
         });

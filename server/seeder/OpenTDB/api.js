@@ -8,14 +8,12 @@ const get = (method, options = {}) => {
 };
 
 const getCategories = () => {
-    console.log('SEEDER: Fetching categories');
     return get(CATEGORIES_METHOD).then(({ data }) => {
         return data.trivia_categories;
     });
 };
 
 const getQuestions = (options = {}) => {
-    console.log(`SEEDER: Fetching questions: ${JSON.stringify(options.params)}`);
     return get(QUESTIONS_METHOD, options).then(({ data }) => {
         return data.results;
     });

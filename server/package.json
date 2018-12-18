@@ -23,7 +23,8 @@
     },
     "devDependencies": {
         "concurrently": "^3.5.1",
-        "nodemon": "^1.17.5"
+        "nodemon": "^1.17.5",
+        "cli-progress": "^2.1.1"
     },
     "proxy": "http://localhost:3000"
 }
