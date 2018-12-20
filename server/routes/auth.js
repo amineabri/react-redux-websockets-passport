@@ -4,6 +4,7 @@ const router = express.Router();
 const User = require("../models/user");
 const passport = require("../passport");
 const secretToken = require("../config").JWT_SECRET;
+const jwtTokenExpiration = require("../config").JWT_TOKEN_EXPIRATION;
 
 router.post("/signup", (req, res) => {
     const { name, password } = req.body;
@@ -75,10 +76,16 @@ router.post("/login", (req, res, next) => {
             }
 
             req.logIn(user, () => {
-                const token = jwt.sign({ sub: user._id }, secretToken);
-                res.status(200).json({
-                    token: token
-                });
+                jwt.sign(
+                    { sub: user._id },
+                    secretToken,
+                    { expiresIn: jwtTokenExpiration },
+                    (err, token) => {
+                        res.status(200).json({
+                            token: `Bearer ${token}`
+                        });
+                    }
+                );
             })
         })(req, res, next);
     }

@@ -59,8 +59,8 @@ class WebsocketService {
                 authenticatedConnection,
                 decodedMessage
             ))
-            .catch(() => {
-                console.log(`WEB_SOCKET_SERVICE: ${userConnection.get('socketId')} NOT AUTHENTICATED`);
+            .catch(error => {
+                console.log(`WEB_SOCKET_SERVICE: Error when authenticating - ${error}`);
             });
     }
 
@@ -68,9 +68,20 @@ class WebsocketService {
         return this.removeConnection(userConnection);
     }
 
-    authenticateConnection(userConnection, token) {
+    authenticateConnection(userConnection, bearerToken) {
         return new Promise((resolve, reject) => {
-            jwt.verify(token, secretToken, (err, decoded) => {
+
+            if (!bearerToken) {
+                return reject("Token not provided");
+            }
+
+            const token = bearerToken.split(' ');
+
+            if (token.length !== 2 || token[0] !== "Bearer" ) {
+                return reject("Token not formatted correctly");
+            }
+
+            jwt.verify(token[1], secretToken, (err, decoded) => {
                 if (err) {
                     return reject(err);
                 }
