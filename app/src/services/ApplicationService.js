@@ -68,8 +68,8 @@ class ApplicationService {
         return new Promise((resolve, reject) => {
             ApiService.post("/auth/signup", { name, password }).then(response => {
                 resolve(response.data);
-            }).catch(error => {
-                reject(error.response.data.error);
+            }).catch(err => {
+                reject(err.response.data.errors);
             });
         });
     }
@@ -79,8 +79,8 @@ class ApplicationService {
             ApiService.post("/auth/login", { name, password }).then(response => {
                 this.setUserToken(response.data.token);
                 resolve(response.data);
-            }).catch(error => {
-                reject(error.response.data.error);
+            }).catch(err => {
+                reject(err.response.data.errors);
             });
         });
     }

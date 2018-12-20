@@ -6,18 +6,17 @@ const passport = require("../passport");
 const secretToken = require("../config").JWT_SECRET;
 const jwtTokenExpiration = require("../config").JWT_TOKEN_EXPIRATION;
 
+const validateLoginData = require('../validation/login');
+const validateRegisterData = require('../validation/register');
+
 router.post("/signup", (req, res) => {
+    const { errors, isValid } = validateRegisterData(req.body);
+
+    if (!isValid) {
+        return res.status(400).json({ errors });
+    }
+
     const { name, password } = req.body;
-
-    if (name.length <= 3) {
-        res.status(400);
-        return res.json({ error: 'Username should be minimum 4 characters'});
-    }
-
-    if (password.length <= 3) {
-        res.status(400);
-        return res.json({ error: 'Password should be minimum 4 characters'});
-    }
 
     User.findOne({ name: name }, (err, user) => {
 
@@ -27,7 +26,9 @@ router.post("/signup", (req, res) => {
 
         if (user) {
             return res.status(400).json({
-                error: "User already exists"
+                errors: {
+                    name: "User already exists"
+                }
             });
         }
 
@@ -48,16 +49,11 @@ router.post("/signup", (req, res) => {
 });
 
 router.post("/login", (req, res, next) => {
-        const { name, password } = req.body;
 
-        if (name.length <= 3) {
-            res.status(400);
-            return res.json({ error: 'Username should be minimum 4 characters'});
-        }
+        const { errors, isValid } = validateLoginData(req.body);
 
-        if (password.length <= 3) {
-            res.status(400);
-            return res.json({ error: 'Password should be minimum 4 characters'});
+        if (!isValid) {
+            return res.status(400).json({ errors });
         }
 
         next();
@@ -71,7 +67,7 @@ router.post("/login", (req, res, next) => {
 
             if (!user) {
                 return res.status(401).json({
-                    error: info.message
+                    errors: info
                 });
             }
 

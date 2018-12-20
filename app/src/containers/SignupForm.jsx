@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
-import _ from "lodash";
+import { Record } from "immutable";
 import ApplicationService from "../services/ApplicationService";
 import {
     TextField,
@@ -8,16 +8,23 @@ import {
     Snackbar
 } from 'rmwc';
 
-class LoginForm extends Component {
+const ErrorRecord = Record({
+    name: null,
+    password: null
+});
+
+const InputRecord = Record({
+    name: "",
+    password: ""
+});
+
+class RegisterForm extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            message: null,
-            user: {
-                name: "",
-                password: ""
-            },
+            errors: new ErrorRecord({}),
+            inputs: new InputRecord({}),
             isSnackbarOpen: false
         };
 
@@ -26,66 +33,76 @@ class LoginForm extends Component {
     }
 
     onSubmit(event) {
-        const { user } = this.state;
+        const { inputs } = this.state;
 
         event.preventDefault();
 
-        ApplicationService.register(user.name, user.password).then(() => {
-            ApplicationService.login(user.name, user.password).then(() => {
+        ApplicationService.register(
+            inputs.get('name'),
+            inputs.get('password')
+        ).then(() => {
+            ApplicationService.login(
+                inputs.get('name'),
+                inputs.get('password')
+            ).then(() => {
                 this.props.history.push("/dashboard");
                 window.location.reload();
             });
         }).catch(err => {
             this.setState({
-                message: err,
+                errors: new ErrorRecord(err),
                 isSnackbarOpen: true
             });
         });
     }
 
     onTextFieldChange(event) {
-        let { user } = this.state;
-        const field = event.target.name;
-        user[field] = event.target.value;
+        const { inputs } = this.state;
+
         this.setState({
-            user: user
+            inputs: inputs.set(event.target.name, event.target.value)
         });
     }
 
     render() {
-        const { user, message } = this.state;
+        const { inputs, errors } = this.state;
 
         return (
             <form onSubmit={this.onSubmit} method="post">
                 <TextField
                     fullwidth
-                    placeholder={"Username"}
-                    value={_.get(user, "name")}
+                    placeholder="Username"
+                    value={inputs.get('name')}
                     onChange={this.onTextFieldChange}
-                    type={"text"}
-                    name={"name"}
+                    type="text"
+                    name="name"
+                    invalid={errors.get('name') !== null}
                 />
                 <TextField
                     fullwidth
                     placeholder="Password"
-                    value={_.get(user, "password")}
+                    value={inputs.get('password')}
                     onChange={this.onTextFieldChange}
                     type="password"
                     name="password"
+                    invalid={errors.get('password') !== null}
                 />
                 <br />
                 <Button type="submit" raised theme="secondary-bg on-secondary">
                     Sign up
                 </Button>
-                <Snackbar
-                    show={this.state.isSnackbarOpen}
-                    onHide={() => this.setState({isSnackbarOpen: false})}
-                    message={message}
-                    actionText="Dismiss"
-                />
+                {Object.values(errors.toJS()).map((error, index) => error && (
+                    <Snackbar
+                        key={index}
+                        show={this.state.isSnackbarOpen}
+                        onHide={() => this.setState({isSnackbarOpen: false})}
+                        message={error}
+                        actionText="Dismiss"
+                    />
+                ))}
             </form>
         );
     }
 }
 
-export default withRouter(LoginForm);
+export default withRouter(RegisterForm);
