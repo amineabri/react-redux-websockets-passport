@@ -12,6 +12,7 @@ const authRoutes = require("./routes/auth");
 const quizzesRoutes = require("./routes/quizzes");
 const PORT = require("./config").PORT;
 const SESSION_SECRET = require("./config").SESSION_SECRET;
+const SESSION_EXPIRATION = require("./config").SESSION_EXPIRATION;
 
 const app = express();
 
@@ -23,7 +24,10 @@ app.use(
         secret: SESSION_SECRET,
         store: new MongoStore({ mongooseConnection: dbConnection }),
         resave: false,
-        saveUninitialized: false
+        saveUninitialized: false,
+        cookie: {
+            maxAge: SESSION_EXPIRATION
+        }
     })
 );
 
