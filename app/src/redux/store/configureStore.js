@@ -1,11 +1,15 @@
-if (process.env.NODE_ENV === "development") {
-    module.exports = require("./configureStore.dev");
-} else {
-    module.exports = require("./configureStore.prod");
-}
+import thunk from "redux-thunk";
+import promise from "redux-promise";
+import { webSocketMiddleware } from "../../services/WebSocketService";
+import { createStore, applyMiddleware, compose } from "redux";
+import reducers from "../reducers";
 
-/**
-  This is based on which environment you are running on,
-  because in development you should get access to Redux DevTools,
-  in production you should be not allowed to use Redux dev tools
- */
+const middleware = [thunk, promise, webSocketMiddleware];
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+const store = createStore(
+    reducers,
+    composeEnhancers(applyMiddleware(...middleware))
+);
+
+export default store;

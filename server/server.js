@@ -2,6 +2,7 @@ const SocketServer = require("ws").Server;
 const express = require("express");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
+const path = require("path");
 const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
 const dbConnection = require("./models");
@@ -22,7 +23,6 @@ app.use(bodyParser.json());
 app.use(
     session({
         secret: SESSION_SECRET,
-        store: new MongoStore({ mongooseConnection: dbConnection }),
         resave: false,
         saveUninitialized: false,
         cookie: {
@@ -38,6 +38,17 @@ seeder.init();
 
 app.use("/auth", authRoutes);
 app.use("/quizzes", quizzesRoutes);
+
+if (process.env.NODE_ENV === "production") {
+    app.use(
+        express.static('../app/build')
+    );
+    app.get('*', (req, res) => {
+        res.sendFile(
+            path.resolve(__dirname, '..', 'app', 'build', 'index.html')
+        )
+    })
+}
 
 const server = app.listen(process.env.PORT ? process.env.PORT : PORT, () => {
     console.log(`EXPRESS: Listening on PORT: ${process.env.PORT ? process.env.PORT : PORT}`);

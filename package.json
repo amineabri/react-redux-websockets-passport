@@ -1,0 +1,11 @@
+{
+    "name": "react-redux-websockets-passport",
+    "version": "0.0.1",
+    "description": "React Redux Websockets Passport",
+    "author": "ievgen11",
+    "scripts": {
+        "start": "cd server && npm install && node ./server.js",
+        "app": "cd app && npm install && npm run app",
+        "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false cd app && npm install && npm run build"
+    }
+}
