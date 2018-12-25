@@ -10,6 +10,9 @@
 /server/yarn-debug.log*
 /server/yarn-error.log*
 
+#keys
+/server/config/config_dev.js
+
 # idea
 .idea
 

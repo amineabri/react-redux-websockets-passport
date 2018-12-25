@@ -39,8 +39,8 @@ seeder.init();
 app.use("/auth", authRoutes);
 app.use("/quizzes", quizzesRoutes);
 
-const server = app.listen(PORT, () => {
-    console.log(`EXPRESS: Listening on PORT: ${PORT}`);
+const server = app.listen(process.env.PORT ? process.env.PORT : PORT, () => {
+    console.log(`EXPRESS: Listening on PORT: ${process.env.PORT ? process.env.PORT : PORT}`);
 });
 
 const wss = new SocketServer({ server });
