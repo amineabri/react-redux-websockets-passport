@@ -1,7 +1,7 @@
 {
     "name": "react-redux-websockets-passport",
     "version": "0.0.1",
-    "description": "React Redux Websockets Passport",
+    "description": "Quiz App implemented with React, Redux, Websockets and Passport",
     "author": "ievgen11",
     "scripts": {
         "start": "cd server && npm install && node ./server.js",

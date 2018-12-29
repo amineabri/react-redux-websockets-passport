@@ -1,7 +1,7 @@
 {
     "name": "react-redux-websockets-passport-server",
     "version": "0.0.1",
-    "description": "Server",
+    "description": "The server part of the App",
     "author": "ievgen11",
     "dependencies": {
         "axios": "^0.17.1",
