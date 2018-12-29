@@ -1,6 +1,8 @@
 # app
 /app/build
 /app/node_modules
+/app/package-lock.json
+/app/yarn.lock
 /app/npm-debug.log*
 /app/yarn-debug.log*
 /app/yarn-error.log*
@@ -10,6 +12,8 @@
 /server/npm-debug.log*
 /server/yarn-debug.log*
 /server/yarn-error.log*
+/server/package-lock.json
+/server/yarn.lock
 
 # idea
 .idea
