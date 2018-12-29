@@ -10,7 +10,7 @@ Application with public and protected links for access control, handled by Passp
 
 ## Run locally
 
-The local app expects MongoDB to be running on ```mongodb://localhost:27017```.
+The local app expects MongoDB to be running on `mongodb://localhost:27017`.
 
 ```sh
 # In ./app folder
@@ -24,20 +24,27 @@ $ yarn run server
 
 **Front-end**
 
-- React
-- Redux
-- Immutable.js
+-   React
+-   Redux
+-   Immutable.js
 
 **Back-end**
 
-- NodeJS
-- Express API
-- Passport authentication
-- WebSockets with JWT authentication
+-   NodeJS
+-   Express API
+-   Passport authentication
+-   WebSockets with JWT authentication
 
 **Data**
 
-- OpenTDB (https://opentdb.com)
+-   OpenTDB (https://opentdb.com)
+
+## TODO
+
+-   [ ] Better error handling in back-end
+-   [ ] Serve timer from back-end via WebSockets
+-   [ ] Add `status` property to Quiz object in DB
+-   [ ] Do not allow users to retry quizzes once successfully completed
 
 ## Demo
 
