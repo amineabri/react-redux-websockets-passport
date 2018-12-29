@@ -23,4 +23,4 @@ module.exports = {
     get,
     getCategories,
     getQuestions
-}
+};

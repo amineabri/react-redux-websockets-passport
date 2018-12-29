@@ -2,32 +2,28 @@ import ApiService from "./ApiService";
 
 let _applicationService = null;
 
-/*
-    Service that manages the main functionality of the app
-*/
 class ApplicationService {
-
     getLeaderboard() {
         return new Promise((resolve, reject) => {
-        return ApiService.get("/quizzes/stats")
-            .then(response => {
-                resolve(response);
-            })
-            .catch(err => {
-                reject(err);
-            });
+            return ApiService.get("/quizzes/stats")
+                .then(response => {
+                    resolve(response);
+                })
+                .catch(err => {
+                    reject(err);
+                });
         });
     }
 
     getAllQuizzes() {
         return new Promise((resolve, reject) => {
-        return ApiService.get("/quizzes")
-            .then(response => {
-                resolve(response);
-            })
-            .catch(err => {
-                reject(err);
-            });
+            return ApiService.get("/quizzes")
+                .then(response => {
+                    resolve(response);
+                })
+                .catch(err => {
+                    reject(err);
+                });
         });
     }
 
@@ -45,43 +41,51 @@ class ApplicationService {
 
     logout() {
         return new Promise((resolve, reject) => {
-            ApiService.post("/auth/logout").then(response => {
-                this.removeUserToken();
-                resolve(response.data);
-            }).catch(err => {
-                reject(err);
-            });
+            ApiService.post("/auth/logout")
+                .then(response => {
+                    this.removeUserToken();
+                    resolve(response.data);
+                })
+                .catch(err => {
+                    reject(err);
+                });
         });
     }
 
     getCurrentUser() {
         return new Promise((resolve, reject) => {
-            ApiService.get("/auth/user").then(response => {
-                resolve(response.data);
-            }).catch(err => {
-                reject(err);
-            });
+            ApiService.get("/auth/user")
+                .then(response => {
+                    resolve(response.data);
+                })
+                .catch(err => {
+                    reject(err);
+                });
         });
     }
 
     register(name = null, password = null) {
         return new Promise((resolve, reject) => {
-            ApiService.post("/auth/signup", { name, password }).then(response => {
-                resolve(response.data);
-            }).catch(err => {
-                reject(err.response.data.errors);
-            });
+            ApiService.post("/auth/signup", { name, password })
+                .then(response => {
+                    resolve(response.data);
+                })
+                .catch(err => {
+                    reject(err.response.data.errors);
+                });
         });
     }
 
     login(name = null, password = null) {
         return new Promise((resolve, reject) => {
-            ApiService.post("/auth/login", { name, password }).then(response => {
-                this.setUserToken(response.data.token);
-                resolve(response.data);
-            }).catch(err => {
-                reject(err.response.data.errors);
-            });
+            ApiService.post("/auth/login", { name, password })
+                .then(response => {
+                    this.setUserToken(response.data.token);
+                    resolve(response.data);
+                })
+                .catch(err => {
+                    reject(err.response.data.errors);
+                });
         });
     }
 }

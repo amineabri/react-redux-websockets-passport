@@ -12,8 +12,8 @@ import {
     DataTableHeadCell,
     DataTableRow,
     DataTableCell
-  } from '@rmwc/data-table';
-  import '@rmwc/data-table/data-table.css';
+} from "@rmwc/data-table";
+import "@rmwc/data-table/data-table.css";
 
 class Leaderboard extends Component {
     static propTypes = {
@@ -37,12 +37,8 @@ class Leaderboard extends Component {
                 <DataTableContent>
                     <DataTableHead>
                         <DataTableRow>
-                            <DataTableHeadCell>
-                                User
-                            </DataTableHeadCell>
-                            <DataTableHeadCell
-                                alignEnd
-                            >
+                            <DataTableHeadCell>User</DataTableHeadCell>
+                            <DataTableHeadCell alignEnd>
                                 Points
                             </DataTableHeadCell>
                         </DataTableRow>
@@ -50,9 +46,7 @@ class Leaderboard extends Component {
                     <DataTableBody>
                         {data.map((user, index) => (
                             <DataTableRow key={index}>
-                                <DataTableCell>
-                                    {user.name}
-                                </DataTableCell>
+                                <DataTableCell>{user.name}</DataTableCell>
                                 <DataTableCell alignEnd>
                                     {user.total_points}
                                 </DataTableCell>

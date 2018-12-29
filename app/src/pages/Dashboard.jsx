@@ -1,10 +1,7 @@
 import React, { Component } from "react";
 import QuizList from "../containers/QuizList";
 import Header from "../containers/Header";
-import {
-    Theme,
-    TopAppBarFixedAdjust
-} from 'rmwc';
+import { Theme, TopAppBarFixedAdjust } from "rmwc";
 
 export default class Dashboard extends Component {
     render() {

@@ -7,7 +7,6 @@ import { connect } from "react-redux";
 import ApplicationService from "../services/ApplicationService";
 
 class Locked extends Component {
-
     static propTypes = {
         isAuthenticated: PropTypes.bool.isRequired,
         setCurrentUser: PropTypes.func.isRequired
@@ -31,7 +30,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    setCurrentUser: isAuthenticated => dispatch(actions.setCurrentUser(isAuthenticated))
+    setCurrentUser: isAuthenticated =>
+        dispatch(actions.setCurrentUser(isAuthenticated))
 });
 
 const ConnectedLocked = withRouter(

@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import actions from '../redux/actions';
-import selectors from '../redux/selectors';
+import React, { Component } from "react";
+import { Link, withRouter } from "react-router-dom";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import actions from "../redux/actions";
+import selectors from "../redux/selectors";
 import {
     TopAppBar,
     TopAppBarRow,
@@ -11,23 +11,17 @@ import {
     TopAppBarTitle,
     Button,
     ButtonIcon
-} from 'rmwc';
+} from "rmwc";
 
 class Header extends Component {
-
     static propTypes = {
         userName: PropTypes.string,
         isAuthenticated: PropTypes.bool.isRequired,
         logoutAction: PropTypes.func.isRequired
-    }
+    };
 
     render() {
-        const {
-            history,
-            isAuthenticated,
-            logoutAction,
-            userName
-        } = this.props;
+        const { history, isAuthenticated, logoutAction, userName } = this.props;
 
         return (
             <TopAppBar>
@@ -42,25 +36,19 @@ class Header extends Component {
                                 </Link>
                             ) : (
                                 <Link to="/">
-                                    <Button theme="onPrimary">
-                                        App
-                                    </Button>
+                                    <Button theme="onPrimary">App</Button>
                                 </Link>
                             )}
                         </TopAppBarTitle>
                     </TopAppBarSection>
                     <TopAppBarSection alignEnd>
                         <Link to="/about">
-                            <Button unelevated>
-                                About
-                            </Button>
+                            <Button unelevated>About</Button>
                         </Link>
                         {isAuthenticated ? (
                             <div>
                                 <Link to="/leaderboard">
-                                    <Button unelevated>
-                                        Leaderboard
-                                    </Button>
+                                    <Button unelevated>Leaderboard</Button>
                                 </Link>
                                 &nbsp;
                                 <Button
@@ -79,14 +67,10 @@ class Header extends Component {
                         ) : (
                             <div>
                                 <Link to="/sign-up">
-                                    <Button unelevated>
-                                        Sign up
-                                    </Button>
+                                    <Button unelevated>Sign up</Button>
                                 </Link>
                                 <Link to="/login">
-                                    <Button unelevated>
-                                        Log in
-                                    </Button>
+                                    <Button unelevated>Log in</Button>
                                 </Link>
                             </div>
                         )}
@@ -95,10 +79,9 @@ class Header extends Component {
             </TopAppBar>
         );
     }
-
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
     userName: selectors.getCurrentUserName(state),
     isAuthenticated: selectors.getIsAuthenticated(state)
 });
@@ -108,7 +91,10 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const ConnectedHeader = withRouter(
-    connect(mapStateToProps, mapDispatchToProps)(Header)
+    connect(
+        mapStateToProps,
+        mapDispatchToProps
+    )(Header)
 );
 
 export default ConnectedHeader;

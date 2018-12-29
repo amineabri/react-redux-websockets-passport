@@ -6,7 +6,6 @@ import { connect } from "react-redux";
 import ApplicationService from "../services/ApplicationService";
 
 class App extends Component {
-
     static propTypes = {
         setCurrentUser: PropTypes.func.isRequired
     };
@@ -25,7 +24,8 @@ class App extends Component {
 const mapStateToProps = () => ({});
 
 const mapDispatchToProps = dispatch => ({
-    setCurrentUser: isAuthenticated => dispatch(actions.setCurrentUser(isAuthenticated))
+    setCurrentUser: isAuthenticated =>
+        dispatch(actions.setCurrentUser(isAuthenticated))
 });
 
 const ConnectedApp = withRouter(

@@ -1,4 +1,4 @@
-const _cliProgress = require('cli-progress');
+const _cliProgress = require("cli-progress");
 const Quiz = require("../models/quiz");
 const getCategories = require("./OpenTDB/api").getCategories;
 const getQuestions = require("./OpenTDB/api").getQuestions;
@@ -28,18 +28,21 @@ function fetchQuizDataFromAPI() {
                         amount: QUESTIONS_PER_QUIZ
                     }
                 }).then(questions => {
-
                     const formattedQuestions = [];
 
                     questions.forEach(question => {
                         const allAnswers = question.incorrect_answers;
                         allAnswers.push(question.correct_answer);
-                        const shuffledAnswers = allAnswers.sort(() => .5 - Math.random());
+                        const shuffledAnswers = allAnswers.sort(
+                            () => 0.5 - Math.random()
+                        );
 
                         formattedQuestions.push({
                             name: question.question,
                             answers: shuffledAnswers,
-                            answer_id: shuffledAnswers.indexOf(question.correct_answer)
+                            answer_id: shuffledAnswers.indexOf(
+                                question.correct_answer
+                            )
                         });
                     });
 
@@ -54,14 +57,13 @@ function fetchQuizDataFromAPI() {
 
             resolve(formattedQuizzes);
 
-            progressBar.stop(); 
-        })
+            progressBar.stop();
+        });
     });
 }
 
 module.exports.init = () => {
     Quiz.getAll((err, quizzes) => {
-
         if (err) {
             console.log("SEEDER: Error");
             console.log(err);
@@ -74,14 +76,15 @@ module.exports.init = () => {
         }
 
         fetchQuizDataFromAPI().then(async quizData => {
-
-            await quizData.forEach(quiz => Quiz.create({
-                name: quiz.name,
-                questions: quiz.questions
-            }));
+            await quizData.forEach(quiz =>
+                Quiz.create({
+                    name: quiz.name,
+                    questions: quiz.questions
+                })
+            );
 
             console.log(`SEEDER: Done`);
             return;
         });
-    })
+    });
 };

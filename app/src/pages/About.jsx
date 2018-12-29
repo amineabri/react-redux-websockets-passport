@@ -1,10 +1,6 @@
 import React, { Component } from "react";
 import Header from "../containers/Header";
-import {
-    Theme,
-    TopAppBarFixedAdjust,
-    Typography
-} from 'rmwc';
+import { Theme, TopAppBarFixedAdjust, Typography } from "rmwc";
 
 export default class About extends Component {
     render() {

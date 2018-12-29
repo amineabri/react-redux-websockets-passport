@@ -40,18 +40,20 @@ app.use("/auth", authRoutes);
 app.use("/quizzes", quizzesRoutes);
 
 if (process.env.NODE_ENV === "production") {
-    app.use(
-        express.static('../app/build')
-    );
-    app.get('*', (req, res) => {
+    app.use(express.static("../app/build"));
+    app.get("*", (req, res) => {
         res.sendFile(
-            path.resolve(__dirname, '..', 'app', 'build', 'index.html')
-        )
-    })
+            path.resolve(__dirname, "..", "app", "build", "index.html")
+        );
+    });
 }
 
 const server = app.listen(process.env.PORT ? process.env.PORT : PORT, () => {
-    console.log(`EXPRESS: Listening on PORT: ${process.env.PORT ? process.env.PORT : PORT}`);
+    console.log(
+        `EXPRESS: Listening on PORT: ${
+            process.env.PORT ? process.env.PORT : PORT
+        }`
+    );
 });
 
 const wss = new SocketServer({ server });

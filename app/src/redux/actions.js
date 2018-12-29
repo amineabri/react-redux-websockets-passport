@@ -1,25 +1,25 @@
 import * as actionTypes from "./actionTypes";
 
-import ApplicationService from '../services/ApplicationService';
+import ApplicationService from "../services/ApplicationService";
 
 export const getAllQuizzes = () => ({
     type: actionTypes.GET_ALL_QUIZZES,
     payload: ApplicationService.getAllQuizzes()
 });
 
-export const joinQuizRequest = (quizId) => ({
+export const joinQuizRequest = quizId => ({
     type: actionTypes.JOIN_QUIZ_REQUEST,
     payload: { quizId },
     webSocketAction: true
 });
 
-export const leaveQuizRequest = (quizId) => ({
+export const leaveQuizRequest = quizId => ({
     type: actionTypes.LEAVE_QUIZ_REQUEST,
     payload: { quizId },
     webSocketAction: true
 });
 
-export const setCurrentUser = (payload) => ({
+export const setCurrentUser = payload => ({
     type: actionTypes.SET_CURRENT_USER,
     payload: payload
 });
@@ -29,7 +29,7 @@ export const logoutRequest = () => ({
     payload: ApplicationService.logout()
 });
 
-export const answerQuestionRequest = (params) => ({
+export const answerQuestionRequest = params => ({
     type: actionTypes.ANSWER_QUESTION_REQUEST,
     payload: params,
     webSocketAction: true

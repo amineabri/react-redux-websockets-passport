@@ -1,12 +1,7 @@
 import React, { Component } from "react";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import Header from "../containers/Header";
-import {
-    Theme,
-    TopAppBarFixedAdjust,
-    Typography,
-    Button
-} from 'rmwc';
+import { Theme, TopAppBarFixedAdjust, Typography, Button } from "rmwc";
 
 export default class Homepage extends Component {
     render() {
@@ -23,9 +18,7 @@ export default class Homepage extends Component {
                             React + Redux + Passport + Websockets
                         </Typography>
                         <Link to="/sign-up">
-                            <Button theme="onPrimary">
-                                Sign up
-                            </Button>
+                            <Button theme="onPrimary">Sign up</Button>
                         </Link>
                         &nbsp;
                         <Link to="/login">

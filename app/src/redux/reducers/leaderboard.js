@@ -10,11 +10,11 @@ const initialState = Model();
 const UserReducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.GET_LEADERBOARD:
-        return state.withMutations(mutant => {
-            mutant.set("data", action.payload.data);
-        });
+            return state.withMutations(mutant => {
+                mutant.set("data", action.payload.data);
+            });
         default:
-        return state;
+            return state;
     }
 };
 

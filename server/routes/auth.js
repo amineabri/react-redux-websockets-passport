@@ -6,8 +6,8 @@ const passport = require("../passport");
 const secretToken = require("../config").JWT_SECRET;
 const jwtTokenExpiration = require("../config").JWT_TOKEN_EXPIRATION;
 
-const validateLoginData = require('../validation/login');
-const validateRegisterData = require('../validation/register');
+const validateLoginData = require("../validation/login");
+const validateRegisterData = require("../validation/register");
 
 router.post("/signup", (req, res) => {
     const { errors, isValid } = validateRegisterData(req.body);
@@ -19,7 +19,6 @@ router.post("/signup", (req, res) => {
     const { name, password } = req.body;
 
     User.findOne({ name: name }, (err, user) => {
-
         if (err) {
             return next(err);
         }
@@ -38,7 +37,6 @@ router.post("/signup", (req, res) => {
         });
 
         newUser.save((err, savedUser) => {
-
             if (err) {
                 return res.json(err);
             }
@@ -48,8 +46,9 @@ router.post("/signup", (req, res) => {
     });
 });
 
-router.post("/login", (req, res, next) => {
-
+router.post(
+    "/login",
+    (req, res, next) => {
         const { errors, isValid } = validateLoginData(req.body);
 
         if (!isValid) {
@@ -59,8 +58,7 @@ router.post("/login", (req, res, next) => {
         next();
     },
     (req, res, next) => {
-        passport.authenticate('local', (err, user, info) => {
-
+        passport.authenticate("local", (err, user, info) => {
             if (err) {
                 return next(err);
             }
@@ -82,13 +80,12 @@ router.post("/login", (req, res, next) => {
                         });
                     }
                 );
-            })
+            });
         })(req, res, next);
     }
 );
 
 router.get("/user", (req, res, next) => {
-
     if (req.user) {
         return res.json({
             isAuthenticated: true,

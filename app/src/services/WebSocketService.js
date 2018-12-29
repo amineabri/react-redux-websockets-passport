@@ -14,7 +14,7 @@ const ALLOWED_WEBSOCKET_ACTION_TYPES = [
     actionTypes.SOMEONE_LEFT_QUIZ,
     actionTypes.INCOMING_QUESTION,
     actionTypes.ANSWER_QUESTION_SUCCESS
-]
+];
 
 let _webSocketService = null;
 
@@ -75,7 +75,7 @@ class WebSocketService {
             return;
         }
 
-        this.dispatchAction({type, payload});
+        this.dispatchAction({ type, payload });
     }
 
     send(msg = {}) {
@@ -136,8 +136,6 @@ _webSocketService = new WebSocketService();
 
 const webSocketMiddleware = _webSocketService.webSocketMiddleware;
 
-export {
-    webSocketMiddleware
-};
+export { webSocketMiddleware };
 
 export default _webSocketService;

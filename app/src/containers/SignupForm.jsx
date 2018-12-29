@@ -2,11 +2,7 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import { Record } from "immutable";
 import ApplicationService from "../services/ApplicationService";
-import {
-    TextField,
-    Button,
-    Snackbar
-} from 'rmwc';
+import { TextField, Button, Snackbar } from "rmwc";
 
 const ErrorRecord = Record({
     name: null,
@@ -37,23 +33,22 @@ class RegisterForm extends Component {
 
         event.preventDefault();
 
-        ApplicationService.register(
-            inputs.get('name'),
-            inputs.get('password')
-        ).then(() => {
-            ApplicationService.login(
-                inputs.get('name'),
-                inputs.get('password')
-            ).then(() => {
-                this.props.history.push("/dashboard");
-                window.location.reload();
+        ApplicationService.register(inputs.get("name"), inputs.get("password"))
+            .then(() => {
+                ApplicationService.login(
+                    inputs.get("name"),
+                    inputs.get("password")
+                ).then(() => {
+                    this.props.history.push("/dashboard");
+                    window.location.reload();
+                });
+            })
+            .catch(err => {
+                this.setState({
+                    errors: new ErrorRecord(err),
+                    isSnackbarOpen: true
+                });
             });
-        }).catch(err => {
-            this.setState({
-                errors: new ErrorRecord(err),
-                isSnackbarOpen: true
-            });
-        });
     }
 
     onTextFieldChange(event) {
@@ -72,34 +67,39 @@ class RegisterForm extends Component {
                 <TextField
                     fullwidth
                     placeholder="Username"
-                    value={inputs.get('name')}
+                    value={inputs.get("name")}
                     onChange={this.onTextFieldChange}
                     type="text"
                     name="name"
-                    invalid={errors.get('name') !== null}
+                    invalid={errors.get("name") !== null}
                 />
                 <TextField
                     fullwidth
                     placeholder="Password"
-                    value={inputs.get('password')}
+                    value={inputs.get("password")}
                     onChange={this.onTextFieldChange}
                     type="password"
                     name="password"
-                    invalid={errors.get('password') !== null}
+                    invalid={errors.get("password") !== null}
                 />
                 <br />
                 <Button type="submit" raised theme="secondary-bg on-secondary">
                     Sign up
                 </Button>
-                {Object.values(errors.toJS()).map((error, index) => error && (
-                    <Snackbar
-                        key={index}
-                        show={this.state.isSnackbarOpen}
-                        onHide={() => this.setState({isSnackbarOpen: false})}
-                        message={error}
-                        actionText="Dismiss"
-                    />
-                ))}
+                {Object.values(errors.toJS()).map(
+                    (error, index) =>
+                        error && (
+                            <Snackbar
+                                key={index}
+                                show={this.state.isSnackbarOpen}
+                                onHide={() =>
+                                    this.setState({ isSnackbarOpen: false })
+                                }
+                                message={error}
+                                actionText="Dismiss"
+                            />
+                        )
+                )}
             </form>
         );
     }

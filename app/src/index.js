@@ -21,16 +21,18 @@ import Quiz from "./pages/Quiz";
 import Locked from "./containers/Locked";
 import App from "./containers/App";
 
-import { RMWCProvider, ThemeProvider } from 'rmwc';
-import './styles/app.css';
+import { RMWCProvider, ThemeProvider } from "rmwc";
+import "./styles/app.css";
 
 ReactDOM.render(
     <RMWCProvider>
-        <ThemeProvider options={{
-            primary: '#6200ee',
-            secondary: '#03dac4',
-            error: '#b00020'
-        }}>
+        <ThemeProvider
+            options={{
+                primary: "#6200ee",
+                secondary: "#03dac4",
+                error: "#b00020"
+            }}
+        >
             <Provider store={store}>
                 <Router>
                     <App>
@@ -41,10 +43,22 @@ ReactDOM.render(
                             <Route exact path="/about" component={About} />
                             <Locked>
                                 <Switch>
-                                    <Route exact path="/leaderboard" component={Leaderboard} />
-                                    <Route exact path="/dashboard" component={Dashboard} />
-                                    <Route exact path="/play/:quizId" component={Quiz} />
-                                    <Redirect to="/"/>
+                                    <Route
+                                        exact
+                                        path="/leaderboard"
+                                        component={Leaderboard}
+                                    />
+                                    <Route
+                                        exact
+                                        path="/dashboard"
+                                        component={Dashboard}
+                                    />
+                                    <Route
+                                        exact
+                                        path="/play/:quizId"
+                                        component={Quiz}
+                                    />
+                                    <Redirect to="/" />
                                 </Switch>
                             </Locked>
                         </Switch>

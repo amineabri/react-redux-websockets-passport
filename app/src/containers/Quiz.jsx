@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import actions from '../redux/actions';
-import selectors from '../redux/selectors';
+import React, { Component } from "react";
+import { Link, withRouter } from "react-router-dom";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import actions from "../redux/actions";
+import selectors from "../redux/selectors";
 import {
     Typography,
     Button,
@@ -14,8 +14,8 @@ import {
     ListItem,
     ListItemGraphic,
     ThemeProvider,
-	TopAppBarFixedAdjust,
-	TopAppBar,
+    TopAppBarFixedAdjust,
+    TopAppBar,
     TopAppBarRow,
     TopAppBarSection,
     LinearProgress,
@@ -26,15 +26,14 @@ import {
     DialogContent,
     DialogActions,
     DialogButton
-} from 'rmwc';
-import { CircularProgress } from '@rmwc/circular-progress';
+} from "rmwc";
+import { CircularProgress } from "@rmwc/circular-progress";
 
-import '@rmwc/circular-progress/circular-progress.css';
+import "@rmwc/circular-progress/circular-progress.css";
 
 const TIME_TO_ANSWER_QUESTION = 10;
 
 class Quiz extends Component {
-
     static propTypes = {
         quizId: PropTypes.string.isRequired,
         quizName: PropTypes.string,
@@ -49,12 +48,11 @@ class Quiz extends Component {
         isUnexpectedFinished: PropTypes.bool.isRequired,
         activeQuestion: PropTypes.object,
         activeUsers: PropTypes.array.isRequired
-    }
+    };
 
     static defaultProps = {
         data: {}
-    }
-
+    };
 
     constructor(props) {
         super(props);
@@ -70,46 +68,44 @@ class Quiz extends Component {
             timer: TIME_TO_ANSWER_QUESTION,
             isPaused: true,
             isDialogOpen: false
-        }
+        };
     }
 
     componentDidUpdate(prevProps) {
-        if (this.props.activeQuestion.questionId !== prevProps.activeQuestion.questionId) {
+        if (
+            this.props.activeQuestion.questionId !==
+            prevProps.activeQuestion.questionId
+        ) {
             this.handleStartTimer();
         }
     }
 
     componentDidMount() {
-        this.props.joinQuizRequest(
-            this.props.quizId
-        );
+        this.props.joinQuizRequest(this.props.quizId);
     }
 
     componentWillUnmount() {
-        this.props.leaveQuizRequest(
-            this.props.quizId
-        );
+        this.props.leaveQuizRequest(this.props.quizId);
     }
 
     handleTimerTick() {
-        this.setState({ timer : this.state.timer - 1 });
+        this.setState({ timer: this.state.timer - 1 });
     }
 
     handleStartTimer() {
-        clearInterval( this.interval );
-        this.setState({ timer : TIME_TO_ANSWER_QUESTION, isPaused: true });
+        clearInterval(this.interval);
+        this.setState({ timer: TIME_TO_ANSWER_QUESTION, isPaused: true });
 
-		this.interval = setInterval(this.handleTimerTick, 1000);
-        this.setState({ isPaused : false });
+        this.interval = setInterval(this.handleTimerTick, 1000);
+        this.setState({ isPaused: false });
     }
 
     handleStopTimer() {
-        clearInterval( this.interval );
-        this.setState({ isPaused : true });
+        clearInterval(this.interval);
+        this.setState({ isPaused: true });
     }
 
     handleAnswerClick(answerId) {
-
         if (this.props.activeQuestion.question.userAnswer.answerId !== null) {
             return;
         }
@@ -124,31 +120,29 @@ class Quiz extends Component {
     }
 
     getAnswerIcon(answerId) {
-        const {
-            activeQuestion
-        } = this.props;
+        const { activeQuestion } = this.props;
 
         if (activeQuestion.question.userAnswer.answerId === null) {
-            return 'radio_button_unchecked';
+            return "radio_button_unchecked";
         }
 
         if (activeQuestion.question.userAnswer.answerId !== answerId) {
-            return 'radio_button_unchecked';
+            return "radio_button_unchecked";
         }
 
         if (activeQuestion.question.userAnswer.isCorrect) {
-            return 'check';
+            return "check";
         }
 
-        return 'close';
+        return "close";
     }
 
     handleDialogOpen() {
-        this.setState({isDialogOpen: true})
+        this.setState({ isDialogOpen: true });
     }
 
     handleDialogClose(evt) {
-        this.setState({isDialogOpen: false})
+        this.setState({ isDialogOpen: false });
 
         if (evt.detail.action === "accept") {
             this.props.history.push("/dashboard");
@@ -181,28 +175,30 @@ class Quiz extends Component {
                     <DialogContent>You will not get any points</DialogContent>
                     <DialogActions>
                         <DialogButton action="close">Cancel</DialogButton>
-                        <DialogButton action="accept" isDefaultAction>Yes</DialogButton>
+                        <DialogButton action="accept" isDefaultAction>
+                            Yes
+                        </DialogButton>
                     </DialogActions>
                 </Dialog>
                 <TopAppBar>
                     <TopAppBarRow>
                         <TopAppBarSection alignEnd>
-                                {isInProgress ? (
-                                    <Button
-                                        unelevated
-                                        onClick={this.handleDialogOpen}
-                                    >
-                                        <ButtonIcon icon="close" />
-                                        Finish Quiz
+                            {isInProgress ? (
+                                <Button
+                                    unelevated
+                                    onClick={this.handleDialogOpen}
+                                >
+                                    <ButtonIcon icon="close" />
+                                    Finish Quiz
+                                </Button>
+                            ) : (
+                                <Link to="/dashboard">
+                                    <Button unelevated>
+                                        <ButtonIcon icon="arrow_back" />
+                                        Back to Dashboard
                                     </Button>
-                                ) : (
-                                    <Link to="/dashboard">
-                                        <Button unelevated>
-                                            <ButtonIcon icon="arrow_back" />
-                                            Back to Dashboard
-                                        </Button>
-                                    </Link>
-                                )}
+                                </Link>
+                            )}
                         </TopAppBarSection>
                     </TopAppBarRow>
                 </TopAppBar>
@@ -216,12 +212,15 @@ class Quiz extends Component {
                                 </Typography>
                                 {isUnexpectedFinished ? (
                                     <Typography use="headline6" tag="h6">
-                                        Oh no, someone has left the quiz. You still get to keep your points!
+                                        Oh no, someone has left the quiz. You
+                                        still get to keep your points!
                                     </Typography>
                                 ) : null}
                             </GridCell>
                         ) : null}
-                        {!isInProgress && !isFinished && !isUnexpectedFinished ? (
+                        {!isInProgress &&
+                        !isFinished &&
+                        !isUnexpectedFinished ? (
                             <GridCell span="12">
                                 <Typography use="headline1" tag="h1">
                                     {quizName}
@@ -230,54 +229,74 @@ class Quiz extends Component {
                         ) : null}
                         <GridCell span="4">
                             {waitForUsersCount !== 0 && !isInProgress ? (
-                                <ThemeProvider options={{
-                                    primary: '#03dac4'
-                                }}>
+                                <ThemeProvider
+                                    options={{
+                                        primary: "#03dac4"
+                                    }}
+                                >
                                     <Typography use="headline6" tag="h6">
-                                        Waiting for {waitForUsersCount} more users to join...
+                                        Waiting for {waitForUsersCount} more
+                                        users to join...
                                     </Typography>
-                                    <LinearProgress determinate={false}/>
+                                    <LinearProgress determinate={false} />
                                 </ThemeProvider>
                             ) : null}
-                            {error ? (
-                                <span>
-                                    {error}
-                                </span>
-                            ) : null}
+                            {error ? <span>{error}</span> : null}
                         </GridCell>
-                        {Object.keys(activeQuestion).length && activeQuestion.question ? (
+                        {Object.keys(activeQuestion).length &&
+                        activeQuestion.question ? (
                             <GridCell span="12">
                                 <List theme="textPrimaryOnDark">
                                     <Typography use="headline2" tag="h2">
                                         {isPaused ? (
-                                            <ThemeProvider options={{
-                                                primary: '#03dac4'
-                                            }}>
+                                            <ThemeProvider
+                                                options={{
+                                                    primary: "#03dac4"
+                                                }}
+                                            >
                                                 <CircularProgress size="xlarge" />
                                             </ThemeProvider>
                                         ) : (
                                             <span>
-                                                00:{timer.getSeconds() < 10 ? '0' : ''}{timer.getSeconds()}
+                                                00:
+                                                {timer.getSeconds() < 10
+                                                    ? "0"
+                                                    : ""}
+                                                {timer.getSeconds()}
                                             </span>
                                         )}
                                     </Typography>
                                     <Typography use="headline5" tag="h5">
                                         {activeQuestion.question.name}
                                     </Typography>
-                                    {activeQuestion.question.answers.map((answer, answerId) => (
-                                        <ListItem
-                                            key={answerId}
-                                            disabled={activeQuestion.question.userAnswer.answerId !== null &&
-                                                activeQuestion.question.userAnswer.answerId !== answerId
-                                            }
-                                            onClick={() => this.handleAnswerClick(answerId)}
-                                        >
-                                            <ListItemGraphic
-                                                style={{ color: 'inherit' }}
-                                                icon={this.getAnswerIcon(answerId)}
-                                            /> {answer}
-                                        </ListItem>
-                                    ))}
+                                    {activeQuestion.question.answers.map(
+                                        (answer, answerId) => (
+                                            <ListItem
+                                                key={answerId}
+                                                disabled={
+                                                    activeQuestion.question
+                                                        .userAnswer.answerId !==
+                                                        null &&
+                                                    activeQuestion.question
+                                                        .userAnswer.answerId !==
+                                                        answerId
+                                                }
+                                                onClick={() =>
+                                                    this.handleAnswerClick(
+                                                        answerId
+                                                    )
+                                                }
+                                            >
+                                                <ListItemGraphic
+                                                    style={{ color: "inherit" }}
+                                                    icon={this.getAnswerIcon(
+                                                        answerId
+                                                    )}
+                                                />{" "}
+                                                {answer}
+                                            </ListItem>
+                                        )
+                                    )}
                                 </List>
                             </GridCell>
                         ) : null}
@@ -290,7 +309,8 @@ class Quiz extends Component {
                                             selected
                                             leadingIcon="person"
                                         >
-                                            {activeUser.name}: <b>{activeUser.points}</b>
+                                            {activeUser.name}:{" "}
+                                            <b>{activeUser.points}</b>
                                         </Chip>
                                     ))}
                                 </ChipSet>
@@ -301,10 +321,9 @@ class Quiz extends Component {
             </div>
         );
     }
-
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
     error: selectors.getQuizError(state),
     waitForUsersCount: selectors.getWaitForUsersCount(state),
     quizName: selectors.getQuizName(state),
@@ -316,13 +335,17 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    joinQuizRequest: (quizId) => dispatch(actions.joinQuizRequest(quizId)),
-    leaveQuizRequest: (quizId) => dispatch(actions.leaveQuizRequest(quizId)),
-    answerQuestionRequest: (params) => dispatch(actions.answerQuestionRequest(params))
+    joinQuizRequest: quizId => dispatch(actions.joinQuizRequest(quizId)),
+    leaveQuizRequest: quizId => dispatch(actions.leaveQuizRequest(quizId)),
+    answerQuestionRequest: params =>
+        dispatch(actions.answerQuestionRequest(params))
 });
 
 const ConnectedQuiz = withRouter(
-    connect(mapStateToProps, mapDispatchToProps)(Quiz)
+    connect(
+        mapStateToProps,
+        mapDispatchToProps
+    )(Quiz)
 );
 
 export default ConnectedQuiz;
