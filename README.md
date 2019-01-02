@@ -1,7 +1,6 @@
 # Quiz App
 
-![screenshot-react-redux-ws-passport herokuapp com-2019 01 02-15-09-30](https://user-images.githubusercontent.com/11415818/50595434-917dae80-0ea0-11e9-8ee3-21f17e8daf24.png)
-
+![screenshot-localhost-8080-2019 01 02-15-30-24](https://user-images.githubusercontent.com/11415818/50596102-5af56300-0ea3-11e9-9254-c47467676ac9.png)
 
 ## Short overview
 

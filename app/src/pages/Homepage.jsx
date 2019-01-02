@@ -12,7 +12,7 @@ export default class Homepage extends Component {
                 <div className="page">
                     <div className="container">
                         <Typography use="headline1" tag="h1">
-                            App
+                            Quiz
                         </Typography>
                         <Typography use="headline5" tag="h2">
                             React + Redux + Passport + Websockets

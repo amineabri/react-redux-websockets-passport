@@ -14,7 +14,14 @@ export default class About extends Component {
                             About
                         </Typography>
                         <Typography use="body1" tag="p">
-                            About text here
+                            Application with public and protected links for
+                            access control, handled by Passport on the back-end.
+                            Registered users can take part in quiz games in
+                            real-time with other players. All the game
+                            interactions are done through WebSocket with JWT
+                            authentication. Initial quiz questions and answers
+                            are downloaded from OpenTDB, parsed and inserted
+                            into database.
                         </Typography>
                     </div>
                 </div>
