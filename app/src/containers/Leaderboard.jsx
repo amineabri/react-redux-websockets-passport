@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import actions from "../redux/actions";
 import selectors from "../redux/selectors";
+import { LinearProgress } from "rmwc";
 import {
     DataTable,
     DataTableContent,
@@ -18,7 +19,9 @@ import "@rmwc/data-table/data-table.css";
 class Leaderboard extends Component {
     static propTypes = {
         data: PropTypes.array,
-        getLeaderboard: PropTypes.func.isRequired
+        getLeaderboard: PropTypes.func.isRequired,
+        isPending: PropTypes.bool.isRequired,
+        isError: PropTypes.bool.isRequired
     };
 
     static defaultProps = {
@@ -30,11 +33,11 @@ class Leaderboard extends Component {
     }
 
     render() {
-        const { data } = this.props;
+        const { data, isPending, isError } = this.props;
 
         return (
             <DataTable>
-                <DataTableContent>
+                <DataTableContent style={{ minWidth: "420px" }}>
                     <DataTableHead>
                         <DataTableRow>
                             <DataTableHeadCell>User</DataTableHeadCell>
@@ -44,14 +47,30 @@ class Leaderboard extends Component {
                         </DataTableRow>
                     </DataTableHead>
                     <DataTableBody>
-                        {data.map((user, index) => (
-                            <DataTableRow key={index}>
-                                <DataTableCell>{user.name}</DataTableCell>
-                                <DataTableCell alignEnd>
-                                    {user.total_points}
+                        {isPending ? (
+                            <DataTableRow>
+                                <DataTableCell alignMiddle colSpan="2">
+                                    <LinearProgress determinate={false} />
                                 </DataTableCell>
                             </DataTableRow>
-                        ))}
+                        ) : null}
+                        {isError ? (
+                            <DataTableRow activated>
+                                <DataTableCell alignMiddle colSpan="2">
+                                    Try again later
+                                </DataTableCell>
+                            </DataTableRow>
+                        ) : null}
+                        {data.length > 0
+                            ? data.map((user, index) => (
+                                  <DataTableRow key={index}>
+                                      <DataTableCell>{user.name}</DataTableCell>
+                                      <DataTableCell alignEnd>
+                                          {user.total_points}
+                                      </DataTableCell>
+                                  </DataTableRow>
+                              ))
+                            : null}
                     </DataTableBody>
                 </DataTableContent>
             </DataTable>
@@ -60,7 +79,9 @@ class Leaderboard extends Component {
 }
 
 const mapStateToProps = state => ({
-    data: selectors.getLeaderboard(state)
+    data: selectors.getLeaderboard(state),
+    isPending: selectors.getLeaderboardIsPending(state),
+    isError: selectors.getLeaderboardIsError(state)
 });
 
 const mapDispatchToProps = dispatch => ({

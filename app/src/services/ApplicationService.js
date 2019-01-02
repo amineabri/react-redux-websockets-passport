@@ -15,7 +15,7 @@ class ApplicationService {
         });
     }
 
-    getAllQuizzes() {
+    getQuizList() {
         return new Promise((resolve, reject) => {
             return ApiService.get("/quizzes")
                 .then(response => {

@@ -1,10 +1,12 @@
 import { combineReducers } from "redux";
 import user from "./user";
-import quizzes from "./quizzes";
+import quiz from "./quiz";
+import quizList from "./quizList";
 import leaderboard from "./leaderboard";
 
 export default combineReducers({
     user,
-    quizzes,
+    quiz,
+    quizList,
     leaderboard
 });

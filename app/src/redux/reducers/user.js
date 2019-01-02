@@ -10,7 +10,7 @@ const initialState = Model();
 
 const UserReducer = (state = initialState, action) => {
     switch (action.type) {
-        case actionTypes.SET_CURRENT_USER:
+        case actionTypes.GET_CURRENT_USER.FULFILLED:
             return state.withMutations(mutant => {
                 mutant.set("isAuthenticated", action.payload.isAuthenticated);
                 mutant.set("name", action.payload.name);

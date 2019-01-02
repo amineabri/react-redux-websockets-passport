@@ -18,7 +18,6 @@ const activeQuestionModel = Record({
 });
 
 const StateModel = Record({
-    allQuizzes: new Map(),
     activeQuiz: null,
     activeQuestion: activeQuestionModel(),
     activeUsers: [],
@@ -32,27 +31,8 @@ const StateModel = Record({
 
 const initialState = StateModel();
 
-const QuizzesReducer = (state = initialState, action) => {
+const QuizReducer = (state = initialState, action) => {
     switch (action.type) {
-        case actionTypes.GET_ALL_QUIZZES:
-            return state.withMutations(mutant => {
-                mutant.set(
-                    "allQuizzes",
-                    new Map().withMutations(map => {
-                        action.payload.data.forEach(item =>
-                            map.set(item._id, fromJS(item))
-                        );
-                    })
-                );
-            });
-        case actionTypes.SOMEONE_JOINED_QUIZ:
-        case actionTypes.SOMEONE_LEFT_QUIZ:
-            return state.withMutations(mutant => {
-                mutant.setIn(
-                    ["allQuizzes", action.payload.quizId, "usersCount"],
-                    action.payload.usersCount
-                );
-            });
         case actionTypes.JOIN_QUIZ_REQUEST:
             return state.withMutations(mutant => {
                 mutant.set("error", null);
@@ -125,4 +105,4 @@ const QuizzesReducer = (state = initialState, action) => {
     }
 };
 
-export default QuizzesReducer;
+export default QuizReducer;

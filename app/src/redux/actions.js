@@ -2,10 +2,23 @@ import * as actionTypes from "./actionTypes";
 
 import ApplicationService from "../services/ApplicationService";
 
-export const getAllQuizzes = () => ({
-    type: actionTypes.GET_ALL_QUIZZES,
-    payload: ApplicationService.getAllQuizzes()
-});
+export const getQuizList = () => dispatch =>
+    dispatch({
+        type: actionTypes.GET_ALL_QUIZZES.TYPE,
+        payload: ApplicationService.getQuizList
+    });
+
+export const getLeaderboard = () => dispatch =>
+    dispatch({
+        type: actionTypes.GET_LEADERBOARD.TYPE,
+        payload: ApplicationService.getLeaderboard
+    });
+
+export const getCurrentUser = () => dispatch =>
+    dispatch({
+        type: actionTypes.GET_CURRENT_USER.TYPE,
+        payload: ApplicationService.getCurrentUser
+    });
 
 export const joinQuizRequest = quizId => ({
     type: actionTypes.JOIN_QUIZ_REQUEST,
@@ -19,11 +32,6 @@ export const leaveQuizRequest = quizId => ({
     webSocketAction: true
 });
 
-export const setCurrentUser = payload => ({
-    type: actionTypes.SET_CURRENT_USER,
-    payload: payload
-});
-
 export const logoutRequest = () => ({
     type: actionTypes.LOGOUT_REQUEST,
     payload: ApplicationService.logout()
@@ -35,17 +43,12 @@ export const answerQuestionRequest = params => ({
     webSocketAction: true
 });
 
-export const getLeaderboard = () => ({
-    type: actionTypes.GET_LEADERBOARD,
-    payload: ApplicationService.getLeaderboard()
-});
-
 export default {
-    getAllQuizzes,
+    getQuizList,
     joinQuizRequest,
     leaveQuizRequest,
     logoutRequest,
     answerQuestionRequest,
     getLeaderboard,
-    setCurrentUser
+    getCurrentUser
 };

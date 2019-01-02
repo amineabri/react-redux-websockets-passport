@@ -1,7 +1,6 @@
 import React from "react";
 import { Component } from "react";
 import PropTypes from "prop-types";
-import actions from "../redux/actions";
 import selectors from "../redux/selectors";
 import Loading from "../pages/Loading";
 import { withRouter } from "react-router-dom";
@@ -10,8 +9,7 @@ import ApplicationService from "../services/ApplicationService";
 
 class Locked extends Component {
     static propTypes = {
-        isAuthenticated: PropTypes.bool.isRequired,
-        setCurrentUser: PropTypes.func.isRequired
+        isAuthenticated: PropTypes.bool.isRequired
     };
 
     componentDidMount() {
@@ -31,16 +29,6 @@ const mapStateToProps = state => ({
     isAuthenticated: selectors.getIsAuthenticated(state)
 });
 
-const mapDispatchToProps = dispatch => ({
-    setCurrentUser: isAuthenticated =>
-        dispatch(actions.setCurrentUser(isAuthenticated))
-});
-
-const ConnectedLocked = withRouter(
-    connect(
-        mapStateToProps,
-        mapDispatchToProps
-    )(Locked)
-);
+const ConnectedLocked = withRouter(connect(mapStateToProps)(Locked));
 
 export default ConnectedLocked;

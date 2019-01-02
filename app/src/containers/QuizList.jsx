@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import actions from "../redux/actions";
 import selectors from "../redux/selectors";
-import { Typography, Button } from "rmwc";
+import { Button, LinearProgress } from "rmwc";
 import {
     DataTable,
     DataTableContent,
@@ -20,8 +20,10 @@ class QuizList extends Component {
     static propTypes = {
         data: PropTypes.object,
         usersOnline: PropTypes.number,
-        getAllQuizzes: PropTypes.func.isRequired,
-        getUsersOnline: PropTypes.func
+        getQuizList: PropTypes.func.isRequired,
+        getUsersOnline: PropTypes.func,
+        isPending: PropTypes.bool.isRequired,
+        isError: PropTypes.bool.isRequired
     };
 
     static defaultProps = {
@@ -34,8 +36,8 @@ class QuizList extends Component {
         this.handleQuizClick = this.handleQuizClick.bind(this);
     }
 
-    componentWillMount() {
-        this.props.getAllQuizzes();
+    componentDidMount() {
+        this.props.getQuizList();
     }
 
     handleQuizClick({ _id, usersCount, maxUsersCount }) {
@@ -47,76 +49,91 @@ class QuizList extends Component {
     }
 
     render() {
-        const { data } = this.props;
+        const { data, isError, isPending } = this.props;
 
         return (
-            <div>
-                <Typography use="headline4" tag="h1">
-                    Quizzes
-                </Typography>
-                <DataTable>
-                    <DataTableContent>
-                        <DataTableHead>
+            <DataTable>
+                <DataTableContent style={{ minWidth: "420px" }}>
+                    <DataTableHead>
+                        <DataTableRow>
+                            <DataTableHeadCell>Name</DataTableHeadCell>
+                            <DataTableHeadCell alignEnd>
+                                Users
+                            </DataTableHeadCell>
+                        </DataTableRow>
+                    </DataTableHead>
+                    <DataTableBody>
+                        {isPending ? (
                             <DataTableRow>
-                                <DataTableHeadCell>Name</DataTableHeadCell>
-                                <DataTableHeadCell alignEnd>
-                                    Users
-                                </DataTableHeadCell>
+                                <DataTableCell alignMiddle colSpan="2">
+                                    <LinearProgress determinate={false} />
+                                </DataTableCell>
                             </DataTableRow>
-                        </DataTableHead>
-                        <DataTableBody>
-                            {Object.values(data)
-                                .sort((a, b) =>
-                                    a.name < b.name
-                                        ? -1
-                                        : a.name > b.name
-                                        ? 1
-                                        : 0
-                                )
-                                .map((quiz, index) => (
-                                    <DataTableRow
-                                        key={index}
-                                        activated={
-                                            quiz.usersCount >=
-                                            quiz.maxUsersCount
-                                        }
-                                    >
-                                        <DataTableCell>
-                                            {quiz.name}
-                                        </DataTableCell>
-                                        <DataTableCell alignEnd>
-                                            <Button
-                                                raised
-                                                dense
-                                                disabled={
-                                                    quiz.usersCount >=
-                                                    quiz.maxUsersCount
-                                                }
-                                                onClick={() =>
-                                                    this.handleQuizClick(quiz)
-                                                }
-                                            >
-                                                {quiz.usersCount}&nbsp;/&nbsp;
-                                                {quiz.maxUsersCount}
-                                            </Button>
-                                        </DataTableCell>
-                                    </DataTableRow>
-                                ))}
-                        </DataTableBody>
-                    </DataTableContent>
-                </DataTable>
-            </div>
+                        ) : null}
+                        {isError ? (
+                            <DataTableRow activated>
+                                <DataTableCell alignMiddle colSpan="2">
+                                    Try again later
+                                </DataTableCell>
+                            </DataTableRow>
+                        ) : null}
+                        {Object.values(data).length > 0
+                            ? Object.values(data)
+                                  .sort((a, b) =>
+                                      a.name < b.name
+                                          ? -1
+                                          : a.name > b.name
+                                          ? 1
+                                          : 0
+                                  )
+                                  .map((quiz, index) => (
+                                      <DataTableRow
+                                          key={index}
+                                          activated={
+                                              quiz.usersCount >=
+                                              quiz.maxUsersCount
+                                          }
+                                      >
+                                          <DataTableCell>
+                                              {quiz.name}
+                                          </DataTableCell>
+                                          <DataTableCell alignEnd>
+                                              <Button
+                                                  raised
+                                                  dense
+                                                  disabled={
+                                                      quiz.usersCount >=
+                                                      quiz.maxUsersCount
+                                                  }
+                                                  onClick={() =>
+                                                      this.handleQuizClick(quiz)
+                                                  }
+                                              >
+                                                  {quiz.usersCount}
+                                                  &nbsp;/&nbsp;
+                                                  {quiz.maxUsersCount}
+                                              </Button>
+                                          </DataTableCell>
+                                      </DataTableRow>
+                                  ))
+                            : null}
+                    </DataTableBody>
+                </DataTableContent>
+            </DataTable>
         );
     }
 }
 
 const mapStateToProps = state => ({
-    data: selectors.getAllQuizzes(state),
+    data: selectors.getQuizList(state),
+    isPending: selectors.getQuizListIsPending(state),
+    isError: selectors.getQuizListIsError(state),
     usersOnline: selectors.getUsersOnline(state)
 });
-const mapDispatchToProps = dispatch => ({
-    getAllQuizzes: () => dispatch(actions.getAllQuizzes())
-});
+
+const mapDispatchToProps = {
+    getQuizList: actions.getQuizList
+};
 
 const ConnectedQuizList = withRouter(
     connect(
