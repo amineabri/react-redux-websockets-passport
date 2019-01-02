@@ -1,8 +1,13 @@
-import _ from "lodash";
+import { Record } from "immutable";
 import { WEB_SOCKET_URL } from "../config";
 import * as actionTypes from "../redux/actionTypes";
 
 import ApplicationService from "./ApplicationService";
+
+const MessageRecord = Record({
+    type: null,
+    payload: {}
+});
 
 const ALLOWED_WEBSOCKET_ACTION_TYPES = [
     actionTypes.JOIN_QUIZ_INFO,
@@ -62,20 +67,20 @@ class WebSocketService {
             console.log(err);
         }
 
-        return message;
+        return new MessageRecord(message);
     }
 
     parseMessage(msg) {
         const message = this.decodeMessage(msg);
 
-        const type = _.get(message, "type");
-        const payload = _.get(message, "payload");
-
-        if (!ALLOWED_WEBSOCKET_ACTION_TYPES.includes(type)) {
+        if (!ALLOWED_WEBSOCKET_ACTION_TYPES.includes(message.get("type"))) {
             return;
         }
 
-        this.dispatchAction({ type, payload });
+        this.dispatchAction({
+            type: message.get("type"),
+            payload: message.get("payload")
+        });
     }
 
     send(msg = {}) {
@@ -95,7 +100,7 @@ class WebSocketService {
         this.activeConnection.onopen = () => {
             this.isConnected = true;
             this.activeConnection.onmessage = event => {
-                this.parseMessage(_.get(event, "data"));
+                this.parseMessage(event.data);
                 console.info("WebSocketService:", event.data);
             };
             console.info("WebSocketService: Connected");
