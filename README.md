@@ -1,5 +1,8 @@
 # Quiz App
 
+![screenshot-react-redux-ws-passport herokuapp com-2019 01 02-15-09-30](https://user-images.githubusercontent.com/11415818/50595434-917dae80-0ea0-11e9-8ee3-21f17e8daf24.png)
+
+
 ## Short overview
 
 A real-time application, where users can register and play quizzes together, earn points and compete with each other.
