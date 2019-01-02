@@ -1,3 +1,9 @@
-module.exports = {
-    WEB_SOCKET_URL: window.location.origin.replace(/^http/, "ws")
-};
+switch (process.env.NODE_ENV) {
+    case "production": {
+        module.exports = require("./config_prod");
+        break;
+    }
+    default: {
+        module.exports = require("./config_dev");
+    }
+}
