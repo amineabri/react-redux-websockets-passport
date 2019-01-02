@@ -1,7 +1,9 @@
+import React from "react";
 import { Component } from "react";
 import PropTypes from "prop-types";
 import actions from "../redux/actions";
 import selectors from "../redux/selectors";
+import Loading from "../pages/Loading";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import ApplicationService from "../services/ApplicationService";
@@ -21,7 +23,7 @@ class Locked extends Component {
     }
 
     render() {
-        return this.props.isAuthenticated ? this.props.children : null;
+        return this.props.isAuthenticated ? this.props.children : <Loading />;
     }
 }
 

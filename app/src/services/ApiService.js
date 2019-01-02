@@ -4,7 +4,11 @@ let _apiService = null;
 
 class ApiService {
     get(endpoint, options = null) {
-        return axios.get(endpoint, options);
+        return new Promise(resolve => {
+            window.setTimeout(() => {
+                resolve(axios.get(endpoint, options));
+            }, 3000);
+        });
     }
 
     post(endpoint = "", data = {}, options) {
