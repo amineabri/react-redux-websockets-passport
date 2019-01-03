@@ -33,6 +33,8 @@ const initialState = StateModel();
 
 const QuizReducer = (state = initialState, action) => {
     switch (action.type) {
+        case actionTypes.LEAVE_QUIZ_REQUEST:
+            return initialState;
         case actionTypes.JOIN_QUIZ_REQUEST:
             return state.withMutations(mutant => {
                 mutant.set("error", null);
