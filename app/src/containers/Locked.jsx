@@ -13,7 +13,7 @@ class Locked extends Component {
     };
 
     componentDidMount() {
-        ApplicationService.getCurrentUser().then(response => {
+        ApplicationService.authenticateUser().then(response => {
             if (!response.isAuthenticated) {
                 this.props.history.push("/");
             }

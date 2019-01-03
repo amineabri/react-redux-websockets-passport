@@ -70,6 +70,10 @@ class WebsocketService {
                 console.log(
                     `WEB_SOCKET_SERVICE: Error when authenticating - ${error}`
                 );
+                this.send(userConnection.get("ws"), {
+                    type: messages.JWT_AUTHENTICATION_ERROR,
+                    payload: error
+                });
             });
     }
 
@@ -91,7 +95,7 @@ class WebsocketService {
 
             jwt.verify(token[1], secretToken, (err, decoded) => {
                 if (err) {
-                    return reject(err);
+                    return reject(err.message);
                 }
 
                 const authenticatedConnection = this.connections

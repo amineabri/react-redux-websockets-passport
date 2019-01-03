@@ -6,11 +6,11 @@ import { connect } from "react-redux";
 
 class App extends Component {
     static propTypes = {
-        getCurrentUser: PropTypes.func.isRequired
+        authenticateUser: PropTypes.func.isRequired
     };
 
     componentDidMount() {
-        this.props.getCurrentUser();
+        this.props.authenticateUser();
     }
 
     render() {
@@ -21,7 +21,7 @@ class App extends Component {
 const mapStateToProps = () => ({});
 
 const mapDispatchToProps = {
-    getCurrentUser: actions.getCurrentUser
+    authenticateUser: actions.authenticateUser
 };
 
 const ConnectedApp = withRouter(

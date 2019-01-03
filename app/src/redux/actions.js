@@ -14,10 +14,10 @@ export const getLeaderboard = () => dispatch =>
         payload: ApplicationService.getLeaderboard
     });
 
-export const getCurrentUser = () => dispatch =>
+export const authenticateUser = () => dispatch =>
     dispatch({
-        type: actionTypes.GET_CURRENT_USER.TYPE,
-        payload: ApplicationService.getCurrentUser
+        type: actionTypes.AUTHENTICATE_USER.TYPE,
+        payload: ApplicationService.authenticateUser
     });
 
 export const joinQuizRequest = quizId => ({
@@ -50,5 +50,5 @@ export default {
     logoutRequest,
     answerQuestionRequest,
     getLeaderboard,
-    getCurrentUser
+    authenticateUser
 };

@@ -1,7 +1,6 @@
 import { createActionType, createPromiseTypes } from "./lib";
 
 export const GET_ALL_QUIZZES = createPromiseTypes([], "GET_ALL_QUIZZES");
-export const GET_CURRENT_USER = createPromiseTypes([], "GET_CURRENT_USER");
 export const GET_LEADERBOARD = createPromiseTypes([], "GET_LEADERBOARD");
 
 export const JOIN_QUIZ = createActionType([], "JOIN_QUIZ");
@@ -28,3 +27,9 @@ export const RECEIVE_USERS_ONLINE = createActionType(
 );
 export const SOMEONE_JOINED_QUIZ = createActionType([], "SOMEONE_JOINED_QUIZ");
 export const SOMEONE_LEFT_QUIZ = createActionType([], "SOMEONE_LEFT_QUIZ");
+
+export const AUTHENTICATE_USER = createPromiseTypes([], "AUTHENTICATE_USER");
+export const JWT_AUTHENTICATION_ERROR = createActionType(
+    [],
+    "JWT_AUTHENTICATION_ERROR"
+);

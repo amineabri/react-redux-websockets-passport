@@ -16,12 +16,14 @@ export const getActiveUsers = store => store.quiz.get("activeUsers");
 export const getUsersOnline = store => store.quiz.get("usersOnline");
 
 export const getCurrentUserName = store => store.user.get("name");
-export const getIsAuthenticated = store => store.user.get("isAuthenticated");
 
 export const getLeaderboard = store => store.leaderboard.get("data");
 export const getLeaderboardIsPending = store =>
     store.leaderboard.get("isPending");
 export const getLeaderboardIsError = store => store.leaderboard.get("isError");
+
+export const getIsAuthenticated = store => store.auth.get("isAuthenticated");
+export const getJwtAuthenticatedError = store => store.auth.get("jwtError");
 
 export default {
     getQuizList,
@@ -40,5 +42,6 @@ export default {
     getLeaderboardIsError,
     getUsersOnline,
     getQuizIsUnexpectedFinished,
-    getCurrentUserName
+    getCurrentUserName,
+    getJwtAuthenticatedError
 };

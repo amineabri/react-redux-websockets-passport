@@ -18,7 +18,8 @@ const ALLOWED_WEBSOCKET_ACTION_TYPES = [
     actionTypes.SOMEONE_JOINED_QUIZ,
     actionTypes.SOMEONE_LEFT_QUIZ,
     actionTypes.INCOMING_QUESTION,
-    actionTypes.ANSWER_QUESTION_SUCCESS
+    actionTypes.ANSWER_QUESTION_SUCCESS,
+    actionTypes.JWT_AUTHENTICATION_ERROR
 ];
 
 let _webSocketService = null;

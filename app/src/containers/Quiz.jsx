@@ -47,7 +47,8 @@ class Quiz extends Component {
         isFinished: PropTypes.bool.isRequired,
         isUnexpectedFinished: PropTypes.bool.isRequired,
         activeQuestion: PropTypes.object,
-        activeUsers: PropTypes.array.isRequired
+        activeUsers: PropTypes.array.isRequired,
+        jwtError: PropTypes.string
     };
 
     static defaultProps = {
@@ -158,7 +159,8 @@ class Quiz extends Component {
             isUnexpectedFinished,
             quizName,
             activeQuestion,
-            activeUsers
+            activeUsers,
+            jwtError
         } = this.props;
 
         const { isPaused } = this.state;
@@ -167,6 +169,15 @@ class Quiz extends Component {
 
         return (
             <div>
+                <Dialog open={jwtError !== ""}>
+                    <DialogTitle>Authentication Error</DialogTitle>
+                    <DialogContent>{jwtError}</DialogContent>
+                    <DialogActions>
+                        <Link to="/dashboard">
+                            <DialogButton>Close</DialogButton>
+                        </Link>
+                    </DialogActions>
+                </Dialog>
                 <Dialog
                     open={this.state.isDialogOpen}
                     onClose={evt => this.handleDialogClose(evt)}
@@ -331,7 +342,8 @@ const mapStateToProps = state => ({
     isFinished: selectors.getQuizIsFinished(state),
     isUnexpectedFinished: selectors.getQuizIsUnexpectedFinished(state),
     activeQuestion: selectors.getActiveQuestion(state),
-    activeUsers: selectors.getActiveUsers(state)
+    activeUsers: selectors.getActiveUsers(state),
+    jwtError: selectors.getJwtAuthenticatedError(state)
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -52,7 +52,7 @@ class ApplicationService {
         });
     }
 
-    getCurrentUser() {
+    authenticateUser() {
         return new Promise((resolve, reject) => {
             ApiService.get("/auth/user")
                 .then(response => {
